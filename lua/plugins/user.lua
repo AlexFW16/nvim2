@@ -80,6 +80,12 @@ return {
       )
     end,
   },
+
+  {
+  "nvim-zh/colorful-winsep.nvim",
+  config = true,
+  event = { "WinLeave" },
+},
   {
     "toppair/peek.nvim",
     event = { "VeryLazy" },
