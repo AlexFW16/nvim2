@@ -100,15 +100,16 @@ return {
             end,
             desc = "Renders and exports markdown with latex",
           },
-          ["<Leader>fd"] = {
-            function() require("telescope.builtin").diagnostics() end,
-            desc = "Find diagnostics (buffer)",
-          },
-          ["<Leader>fD"] = {
-            function() vim.cmd "Telescope lsp_workspace_diagnostics" end,
-            desc = "Find diagnostics (all files)",
-          },
-
+          -- NOTE: moved to telescope.lua because require telescope.builtin might give issues
+          -- ["<Leader>fd"] = {
+          --   function() require("telescope.builtin").diagnostics() end,
+          --   desc = "Find diagnostics (buffer)",
+          -- },
+          -- ["<Leader>fD"] = {
+          --   function() vim.cmd "Telescope lsp_workspace_diagnostics" end,
+          --   desc = "Find diagnostics (all files)",
+          -- },
+          --
           ["<Leader>zs"] = {
             function()
               vim.cmd "vsplit"
