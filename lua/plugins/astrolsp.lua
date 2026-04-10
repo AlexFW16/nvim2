@@ -1,4 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- AstroLSP allows you to customize the features in AstroNvim's LSP configuration engine
 -- Configuration documentation can be found with `:h astrolsp`
@@ -45,6 +44,28 @@ return {
     -- client specific configuration can also go in `lsp/` in your configuration root (see `:h lsp-config`)
     config = {
       -- ["*"] = { capabilities = {} }, -- modify default LSP client settings such as capabilities
+      -- NOTE: used s.t. pyright first checks venv
+      basedpyright = {
+        before_init = function(_, config)
+          local function get_python_path(workspace)
+            for _, venv in ipairs({ ".venv", "venv", "env" }) do
+              local python_bin = workspace .. "/" .. venv .. "/bin/python"
+              if vim.fn.executable(python_bin) == 1 then
+                return python_bin
+              end
+            end
+            return "/usr/bin/python3"
+          end
+
+          local python_path = get_python_path(vim.fn.getcwd())
+          config.settings = config.settings or {}
+          config.settings.python = config.settings.python or {}
+          config.settings.python.pythonPath = python_path
+
+          vim.schedule(function()
+            vim.notify("[Pyright] Using Python: " .. python_path, vim.log.levels.INFO)
+          end)
+        end,}
     },
     -- customize how language servers are attached
     handlers = {
