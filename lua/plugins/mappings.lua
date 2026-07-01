@@ -65,9 +65,22 @@ return {
             end,
             desc = "Run with Rscript",
           },
+          ["<Leader>ro"] = {
+            function()
+              local file = vim.fn.expand "%:t:r"
+              local compile_cmd = { "ocamlfind", "ocamlopt", "-o", file, vim.fn.expand("%") }
+              vim.fn.jobstart(compile_cmd, {
+                onExit = function(_, code)
+                  if code == 0 then
+                    vim.fn.jobstart({ "./" .. file }, { detach = true })
+                  end
+                end
+              })
+            end,
+            desc = "Compile and run current file with OCaml",
+          },
 
           -- Custom Keymaps
-          --
           --
           ["<Leader>zm"] = {
             function()
