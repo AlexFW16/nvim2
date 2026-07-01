@@ -122,16 +122,37 @@ return {
             desc = "Find diagnostics (all files)",
           },
 
-          ["<Leader>zs"] = {
-            function()
-              vim.cmd "vsplit"
-              vim.cmd "split"
-              vim.cmd "resize 30"
-              vim.cmd "terminal bash -i -c 'source ~/.bashrc && source venv/bin/activate && exec bash -li'" -- Opens a terminal and sources the venv, keeping the basrc setup
-            end,
-            desc = "COMPAC workspace setup",
-          }, -- setup for COMPAC
+        ["<Leader>zs"] = {
+          function()
+            vim.cmd("vsplit")
+            vim.cmd("split")
+            vim.cmd("resize 30")
 
+            local term_buf = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_win_set_buf(0, term_buf)
+
+            vim.api.nvim_buf_call(term_buf, function()
+              vim.fn.jobstart({
+                "zsh",
+                "-ic", -- interactive + command
+                [[
+                  if [ -f venv/bin/activate ]; then
+                    echo "Activating venv..."
+                    source venv/bin/activate
+                  else
+                    echo "No venv found"
+                  fi
+                  exec zsh -i
+                ]],
+              }, {
+                term = true,
+              })
+            end)
+
+            vim.cmd("startinsert")
+          end,
+          desc = "COMPAC workspace setup",
+        },
           ["<Leader>zf"] = { function() vim.lsp.buf.format { async = true } end, desc = "LSP: Format file" }, -- Auto formats the file
         },
 
