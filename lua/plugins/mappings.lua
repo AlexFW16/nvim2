@@ -65,9 +65,22 @@ return {
             end,
             desc = "Run with Rscript",
           },
+          ["<Leader>ro"] = {
+            function()
+              local file = vim.fn.expand "%:t:r"
+              local compile_cmd = { "ocamlfind", "ocamlopt", "-o", file, vim.fn.expand("%") }
+              vim.fn.jobstart(compile_cmd, {
+                onExit = function(_, code)
+                  if code == 0 then
+                    vim.fn.jobstart({ "./" .. file }, { detach = true })
+                  end
+                end
+              })
+            end,
+            desc = "Compile and run current file with OCaml",
+          },
 
           -- Custom Keymaps
-          --
           --
           ["<Leader>zm"] = {
             function()
@@ -120,6 +133,31 @@ return {
             desc = "COMPAC workspace setup",
           }, -- setup for COMPAC
 
+            local term_buf = vim.api.nvim_create_buf(false, true)
+            vim.api.nvim_win_set_buf(0, term_buf)
+
+            vim.api.nvim_buf_call(term_buf, function()
+              vim.fn.jobstart({
+                "zsh",
+                "-ic", -- interactive + command
+                [[
+                  if [ -f venv/bin/activate ]; then
+                    echo "Activating venv..."
+                    source venv/bin/activate
+                  else
+                    echo "No venv found"
+                  fi
+                  exec zsh -i
+                ]],
+              }, {
+                term = true,
+              })
+            end)
+
+            vim.cmd("startinsert")
+          end,
+          desc = "COMPAC workspace setup",
+        },
           ["<Leader>zf"] = { function() vim.lsp.buf.format { async = true } end, desc = "LSP: Format file" }, -- Auto formats the file
         },
 
