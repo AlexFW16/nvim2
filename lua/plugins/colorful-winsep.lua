@@ -7,7 +7,6 @@ config = function ()
     -- choose between "single", "rounded", "bold" and "double".
     border = "bold",
     excluded_ft = { "packer", "TelescopePrompt", "mason" },
-    highlight = "ColorfulWinSepHL", -- Custom highlight group for the separator
     animate = {
         ---@type "shift"|"progressive"|false
         enabled = false, -- false to disable or choose a option below (e.g. "shift") and set option for it if needed
