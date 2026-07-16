@@ -77,8 +77,8 @@ return {
     opts = function(_, opts)
       if not opts.defaults then opts.defaults = {} end
 
-      -- Makes Telescope panels 15% transparent tinted glass over your wallpaper
-      opts.defaults.winblend = 15
+      -- Solid panel background (winblend conflicts with explicit bg colors)
+      opts.defaults.winblend = 0
 
       -- Fixes layout hijacking when opening files from the dashboard/empty windows
       opts.defaults.get_selection_window = function()
