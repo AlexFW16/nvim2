@@ -14,7 +14,7 @@ return {
   },
   config = function()
     require("opencode").setup({
-      preferred_picker = nil,
+      preferred_picker = 'snacks',
       preferred_completion = nil,
       default_global_keymaps = true,
       default_mode = "build",
@@ -210,7 +210,7 @@ return {
       context = {
         enabled = true,
         cursor_data = {
-          enabled = true,
+          enabled = false,
           context_lines = 5,
         },
         diagnostics = {
