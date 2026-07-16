@@ -21,6 +21,15 @@ return {
             ".git",
           },
         },
+        notifications = {
+          confirm = function(picker, item)
+            if item and item.item then
+              vim.fn.setreg("+", item.item.msg)
+              Snacks.notify.info("Notification copied to clipboard")
+            end
+            picker:close()
+          end,
+        },
       },
     },
   },
