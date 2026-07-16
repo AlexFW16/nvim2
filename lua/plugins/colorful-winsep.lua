@@ -3,7 +3,6 @@ return {
   "nvim-zh/colorful-winsep.nvim",
   event = { "WinLeave" },
 config = function ()
-    -- vim.api.nvim_set_hl(0, "ColorfulWinSepHL", { fg = "#89b4fa", bg = "NONE", bold = false })
     require("colorful-winsep").setup({
     -- choose between "single", "rounded", "bold" and "double".
     border = "bold",
