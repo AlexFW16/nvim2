@@ -25,7 +25,7 @@ end
 
 -- my stuff
 -- TODO: implement
-require "lsp"
+--require "lsp"
 require "node_version"
 
 -- Delete full word with Ctrl + Backspace in Insert Mode

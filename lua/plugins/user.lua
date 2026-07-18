@@ -20,25 +20,90 @@ return {
   -- customize dashboard options
   {
     "folke/snacks.nvim",
-    opts = {
-      dashboard = {
-        preset = {
-          header = table.concat({
-        "      ██████           ██     ██  ██  ██       ██",
-        "     ██    ██          ██     ██  ██  ███     ███",
-        "     ██    ██  ██  ██   ██   ██   ██  ██ ██ ██ ██",
-        "     ██    ██    ██      ██ ██    ██  ██  ██   ██",
-        "      ██████   ██  ██     ███     ██  ██       ██",
-          }, "\n"),
-        },
-      },
-    },
+    -- opts = {
+    --   dashboard = {
+    --     enabled =false,
+    --     preset = {
+    --       header = table.concat({
+    --     "      ██████           ██     ██  ██  ██       ██",
+    --     "     ██    ██          ██     ██  ██  ███     ███",
+    --     "     ██    ██  ██  ██   ██   ██   ██  ██ ██ ██ ██",
+    --     "     ██    ██    ██      ██ ██    ██  ██  ██   ██",
+    --     "      ██████   ██  ██     ███     ██  ██       ██",
+    --       }, "\n"),
+    --     },
+    --   },
+    -- },
   },
 
-  -- You can disable default plugins as follows:
-  { "max397574/better-escape.nvim", enabled = false },
+{
+  "goolord/alpha-nvim",
+  dependencies = { "nvim-mini/mini.icons" },
+  event = "VimEnter",
+  config = function()
+    local alpha = require("alpha")
+    local dashboard = require("alpha.themes.dashboard")dashboard.section.header.val = {
+    "                                                      ",
+    "     ██████╗   ██╗  ██╗  ██╗   ██╗  ██╗  ███╗   ███╗  ",
+    "    ██╔═████╗  ╚██╗██╔╝  ██║   ██║  ██║  ████╗ ████║  ",
+    "    ██║██╔██║   ╚███╔╝   ██║   ██║  ██║  ██╔████╔██║ ",
+    "    ████╔╝██║   ██╔██╗   ╚██╗ ██╔╝  ██║  ██║╚██╔╝██║ ",
+    "    ╚██████╔╝  ██╔╝ ██╗   ╚████╔╝   ██║  ██║ ╚═╝ ██║  ",
+    "     ╚═════╝   ╚═╝  ╚═╝    ╚═══╝    ╚═╝  ╚═╝     ╚═╝  ",
+    "                                                      ",
+    "                        AlexFW                         ",
+    "                                                      ",
+}      dashboard.section.buttons.val = {
+        dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+        dashboard.button("f", "  Find file", ":Telescope find_files<CR>"),
+        dashboard.button("r", "  Recent", ":Telescope oldfiles<CR>"),
+        dashboard.button("s", "  Settings", ":e $MYVIMRC<CR>"),
+        dashboard.button("q", "  Quit NVIM", ":qa<CR>"),
+      }
 
-  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
+-- Completely customize the layout to ONLY show the header centered
+    dashboard.config.layout = {
+      { type = "padding", val = 26 }, -- Adds blank lines at the top to center it vertically
+      dashboard.section.header,
+    }
+
+    alpha.setup(dashboard.config)
+  end,
+  },
+
+-- (hopefully) overrides the default options of the included telescope plugin
+{
+    "nvim-telescope/telescope.nvim",
+    opts = function(_, opts)
+      if not opts.defaults then opts.defaults = {} end
+
+      -- Solid panel background (winblend conflicts with explicit bg colors)
+      opts.defaults.winblend = 0
+
+      -- Fixes layout hijacking when opening files from the dashboard/empty windows
+      opts.defaults.get_selection_window = function()
+        local current_win = vim.api.nvim_get_current_win()
+        local current_buf = vim.api.nvim_win_get_buf(current_win)
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = current_buf })
+        local filetype = vim.api.nvim_get_option_value("filetype", { buf = current_buf })
+
+        if buftype == "terminal" or filetype == "toggleterm" then
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            local bt = vim.api.nvim_get_option_value("buftype", { buf = buf })
+            local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+            if bt ~= "terminal" and ft ~= "toggleterm" and ft ~= "qf" then
+              return win
+            end
+          end
+        end
+
+        return current_win
+      end
+
+      return opts -- Crucial fix for AstroNvim
+    end,
+  },  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
@@ -82,11 +147,6 @@ return {
   },
 
   {
-  "nvim-zh/colorful-winsep.nvim",
-  config = true,
-  event = { "WinLeave" },
-},
-  {
     "toppair/peek.nvim",
     event = { "VeryLazy" },
     build = "deno task --quiet build:fast",
@@ -113,6 +173,12 @@ return {
   },
 
   { "catppuccin/nvim", name = "catppuccin", priority = 999 },
+{
+  "scottmckendry/cyberdream.nvim",
+  lazy = false,
+  priority = 1000,
+--NOTE: config in ui.lua
+},
 
   {
     "github/copilot.vim",
@@ -370,7 +436,24 @@ return {
       -- configurations go here
     },
   },
--- -- Opencode (AI code actions)
+  -- diagnostics for the whole workspace, not just current file
+{
+  "artemave/workspace-diagnostics.nvim",
+  event = "LspAttach",
+  config = function()
+    vim.api.nvim_create_autocmd("LspAttach", {
+      callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client then
+          require("workspace-diagnostics").populate_workspace_diagnostics(client, args.buf)
+        end
+      end,
+    })
+  end,
+},
+
+  -- Opencode (AI code actions) 
+  -- NOTE: implementation thats opencode focused, but trying out nvim ui focues alternative
 -- {
 --   "nickjvandyke/opencode.nvim",
 --   version = "*", -- Latest stable release

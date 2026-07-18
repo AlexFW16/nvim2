@@ -1,5 +1,7 @@
--- 1) Diagnostics (modern API)
-vim.diagnostic.config({
+local lspconfig = require "lspconfig"
+
+-- 1) Global diagnostics config
+vim.diagnostic.config {
   virtual_text = {
     severity = { min = vim.diagnostic.severity.WARN },
     spacing = 4,
@@ -7,11 +9,14 @@ vim.diagnostic.config({
   signs = true,
   underline = false,
   update_in_insert = false,
-})
+}
 
+-- 2) Floating diagnostics severity
+vim.lsp.handlers["textDocument/publishDiagnostics"] =
+  vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { severity_limit = "Warning" })
 
--- 3) LSP config (new API)
-vim.lsp.config("prolog_ls", {
+-- 3) SWI-Prolog LSP setup (CORRECT)
+lspconfig.prolog_ls.setup {
   cmd = {
     "swipl",
     "-g",
@@ -26,9 +31,5 @@ vim.lsp.config("prolog_ls", {
 
   filetypes = { "prolog" },
 
-  -- root_dir → root_markers (new style)
-  root_markers = { ".git" },
-})
-
--- 4) Enable LSP
-vim.lsp.enable("prolog_ls")
+  root_dir = function(fname) return lspconfig.util.root_pattern ".git"(fname) or vim.fn.getcwd() end,
+}

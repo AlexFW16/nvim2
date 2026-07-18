@@ -113,46 +113,43 @@ return {
             end,
             desc = "Renders and exports markdown with latex",
           },
-          ["<Leader>fd"] = {
-            function() require("telescope.builtin").diagnostics() end,
-            desc = "Find diagnostics (buffer)",
+          -- NOTE: moved to telescope.lua because require telescope.builtin might give issues
+          -- ["<Leader>fd"] = {
+          --   function() require("telescope.builtin").diagnostics() end,
+          --   desc = "Find diagnostics (buffer)",
+          -- },
+          -- ["<Leader>fD"] = {
+          --   function() vim.cmd "Telescope lsp_workspace_diagnostics" end,
+          --   desc = "Find diagnostics (all files)",
+          -- },
+          --
+          ["<Leader>zs"] = {
+            function()
+              local term_buf = vim.api.nvim_create_buf(false, true)
+              vim.api.nvim_win_set_buf(0, term_buf)
+
+              vim.api.nvim_buf_call(term_buf, function()
+                vim.fn.jobstart({
+                  "zsh",
+                  "-ic",
+                  [[
+                    if [ -f venv/bin/activate ]; then
+                      echo "Activating venv..."
+                      source venv/bin/activate
+                    else
+                      echo "No venv found"
+                    fi
+                    exec zsh -i
+                  ]],
+                }, {
+                  term = true,
+                })
+              end)
+
+              vim.cmd("startinsert")
+            end,
+            desc = "COMPAC workspace setup",
           },
-          ["<Leader>fD"] = {
-            function() vim.cmd "Telescope lsp_workspace_diagnostics" end,
-            desc = "Find diagnostics (all files)",
-          },
-
-        ["<Leader>zs"] = {
-          function()
-            vim.cmd("vsplit")
-            vim.cmd("split")
-            vim.cmd("resize 30")
-
-            local term_buf = vim.api.nvim_create_buf(false, true)
-            vim.api.nvim_win_set_buf(0, term_buf)
-
-            vim.api.nvim_buf_call(term_buf, function()
-              vim.fn.jobstart({
-                "zsh",
-                "-ic", -- interactive + command
-                [[
-                  if [ -f venv/bin/activate ]; then
-                    echo "Activating venv..."
-                    source venv/bin/activate
-                  else
-                    echo "No venv found"
-                  fi
-                  exec zsh -i
-                ]],
-              }, {
-                term = true,
-              })
-            end)
-
-            vim.cmd("startinsert")
-          end,
-          desc = "COMPAC workspace setup",
-        },
           ["<Leader>zf"] = { function() vim.lsp.buf.format { async = true } end, desc = "LSP: Format file" }, -- Auto formats the file
         },
 

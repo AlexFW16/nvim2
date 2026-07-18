@@ -1,9 +1,23 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- AstroLSP allows you to customize the features in AstroNvim's LSP configuration engine
 -- Configuration documentation can be found with `:h astrolsp`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
+local function get_python_path(workspace)
+  for _, venv in ipairs({ ".venv", "venv", "env" }) do
+    local python_bin = workspace .. "/" .. venv .. "/bin/python"
+    if vim.fn.executable(python_bin) == 1 then
+      return python_bin
+    end
+  end
+  return "/usr/bin/python3"
+end
+
+local function apply_python_settings(config)
+  config.settings = config.settings or {}
+  config.settings.python = config.settings.python or {}
+  config.settings.python.pythonPath = get_python_path(vim.fn.getcwd())
+end
 
 ---@type LazySpec
 return {
@@ -44,8 +58,36 @@ return {
     -- customize language server configuration passed to `vim.lsp.config`
     -- client specific configuration can also go in `lsp/` in your configuration root (see `:h lsp-config`)
     config = {
-      -- ["*"] = { capabilities = {} }, -- modify default LSP client settings such as capabilities
+pyright = {
+  settings = {
+    python = {
+      analysis = {
+        diagnosticMode = "workspace",
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+      },
     },
+  },
+
+  before_init = function(_, config)
+    apply_python_settings(config)
+  end,
+},      -- ["*"] = { capabilities = {} }, -- modify default LSP client settings such as capabilities
+basedpyright = {
+  settings = {
+    python = {
+      analysis = {
+        diagnosticMode = "workspace",
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+      },
+    },
+  },
+
+  before_init = function(_, config)
+    apply_python_settings(config)
+  end,
+},},
     -- customize how language servers are attached
     handlers = {
       -- a function with the key `*` modifies the default handler, functions takes the server name as the parameter
@@ -97,8 +139,31 @@ return {
     -- A custom `on_attach` function to be run after the default `on_attach` function
     -- takes two parameters `client` and `bufnr`  (`:h lsp-attach`)
     on_attach = function(client, bufnr)
-      -- this would disable semanticTokensProvider for all clients
+  -- Only target basedpyright
+  if client.name ~= "basedpyright" then return end
+
+  local function is_attached()
+    return vim.lsp.buf_is_attached(bufnr, client.id)
+  end
+
+  local function restart_if_detached()
+    -- client exists but buffer not attached → zombie state
+    if not is_attached() then
+      vim.lsp.stop_client({ client.id })
+
+      vim.defer_fn(function()
+        vim.cmd("edit")
+      end, 100)
+    end
+  end
+
+  -- Re-check when buffer is re-entered
+  vim.api.nvim_create_autocmd("BufEnter", {
+    buffer = bufnr,
+    desc = "Recover basedpyright if detached",
+    callback = restart_if_detached,
+  })
+end,      -- this would disable semanticTokensProvider for all clients
       -- client.server_capabilities.semanticTokensProvider = nil
-    end,
   },
 }
