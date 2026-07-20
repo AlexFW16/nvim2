@@ -451,6 +451,29 @@ return {
     })
   end,
 },
+  -- Nice scrolling animation
+ {
+    "karb94/neoscroll.nvim",
+    opts = {
+      duration_multiplier = 0.1,
+    },
+},
+
+  -- NOTE: Not used atm, used to automatically adjust widht of 
+  -- current wndow
+  -- {
+  --   "anuvyklack/windows.nvim",
+  --   dependencies={
+  --     "anuvyklack/middleclass",
+  --     -- "anuvyklack/animation.nvim"
+  --   },
+  --   config = function()
+  --     -- vim.o.winwidth = 15
+  --     -- vim.o.winminwidth = 12
+  --     -- vim.o.equalalways = false
+  --     require('windows').setup()
+  --   end,
+  -- },
 
   -- Opencode (AI code actions) 
   -- NOTE: implementation thats opencode focused, but trying out nvim ui focues alternative
