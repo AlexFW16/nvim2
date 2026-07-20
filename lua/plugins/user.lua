@@ -506,7 +506,26 @@ return {
 --   config = function()
 --     ---@type opencode.Opts
 --     vim.g.opencode_opts = {
---       -- Your configuration, if any; goto definition on the type or field for details
+--       server = {
+--         start = function()
+--           local cwd = vim.fn.getcwd()
+--           local name = vim.fs.basename(cwd)
+--           require("opencode.terminal").open(
+--             ("docker run --rm -it -v %s:/repo -w /repo %s opencode --port"):format(cwd, name), {
+--               split = "right",
+--               width = math.floor(vim.o.columns * 0.35),
+--             })
+--         end,
+--         toggle = function()
+--           local cwd = vim.fn.getcwd()
+--           local name = vim.fs.basename(cwd)
+--           require("opencode.terminal").toggle(
+--             ("docker run --rm -it -v %s:/repo -w /repo %s opencode --port"):format(cwd, name), {
+--               split = "right",
+--               width = math.floor(vim.o.columns * 0.35),
+--             })
+--         end,
+--       },
 --     }
 --
 --     vim.o.autoread = true -- Required for `opts.events.reload`

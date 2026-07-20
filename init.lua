@@ -29,7 +29,7 @@ end
 require "node_version"
 
 -- Delete full word with Ctrl + Backspace in Insert Mode
- vim.keymap.set("i", "<C-H>", "<C-W>", { noremap = true })
+vim.keymap.set("i", "<C-H>", "<C-W>", { noremap = true })
 
 require "lazy_setup"
 require "polish"
