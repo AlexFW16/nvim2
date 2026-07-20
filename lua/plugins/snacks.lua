@@ -4,6 +4,7 @@ return {
   "folke/snacks.nvim",
   opts = {
     picker = {
+      main = { current = true },
       sources = {
         files = {
           exclude = {
