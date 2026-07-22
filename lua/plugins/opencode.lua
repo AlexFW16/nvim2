@@ -38,8 +38,8 @@ return {
         editor = {
           ["<leader>og"] = { "toggle" },
           -- ["<leader>oi"] = { "open_input" },
-          ["<C-i>"] = { "open_input" },
-          ["<C-I>"] = { "open_input_new_session" },
+          ["<C-p>"] = { "open_input" },
+          ["<C-P>"] = { "open_input_new_session" },
           ["<leader>oo"] = { "open_output" },
           ["<leader>ot"] = { "toggle_focus" },
           ["<leader>oT"] = { "timeline" },
