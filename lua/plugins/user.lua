@@ -1,4 +1,3 @@
-
 -- You can also add or configure plugins by creating files in this `plugins/` folder
 -- PLEASE REMOVE THE EXAMPLES YOU HAVE NO INTEREST IN BEFORE ENABLING THIS FILE
 -- Here are some examples:
@@ -36,24 +35,26 @@ return {
     -- },
   },
 
-{
-  "goolord/alpha-nvim",
-  dependencies = { "nvim-mini/mini.icons" },
-  event = "VimEnter",
-  config = function()
-    local alpha = require("alpha")
-    local dashboard = require("alpha.themes.dashboard")dashboard.section.header.val = {
-    "                                                      ",
-    "     ██████╗   ██╗  ██╗  ██╗   ██╗  ██╗  ███╗   ███╗  ",
-    "    ██╔═████╗  ╚██╗██╔╝  ██║   ██║  ██║  ████╗ ████║  ",
-    "    ██║██╔██║   ╚███╔╝   ██║   ██║  ██║  ██╔████╔██║ ",
-    "    ████╔╝██║   ██╔██╗   ╚██╗ ██╔╝  ██║  ██║╚██╔╝██║ ",
-    "    ╚██████╔╝  ██╔╝ ██╗   ╚████╔╝   ██║  ██║ ╚═╝ ██║  ",
-    "     ╚═════╝   ╚═╝  ╚═╝    ╚═══╝    ╚═╝  ╚═╝     ╚═╝  ",
-    "                                                      ",
-    "                        AlexFW                         ",
-    "                                                      ",
-}      dashboard.section.buttons.val = {
+  {
+    "goolord/alpha-nvim",
+    dependencies = { "nvim-mini/mini.icons" },
+    event = "VimEnter",
+    config = function()
+      local alpha = require "alpha"
+      local dashboard = require "alpha.themes.dashboard"
+      dashboard.section.header.val = {
+        "                                                      ",
+        "     ██████╗   ██╗  ██╗  ██╗   ██╗  ██╗  ███╗   ███╗  ",
+        "    ██╔═████╗  ╚██╗██╔╝  ██║   ██║  ██║  ████╗ ████║  ",
+        "    ██║██╔██║   ╚███╔╝   ██║   ██║  ██║  ██╔████╔██║ ",
+        "    ████╔╝██║   ██╔██╗   ╚██╗ ██╔╝  ██║  ██║╚██╔╝██║ ",
+        "    ╚██████╔╝  ██╔╝ ██╗   ╚████╔╝   ██║  ██║ ╚═╝ ██║  ",
+        "     ╚═════╝   ╚═╝  ╚═╝    ╚═══╝    ╚═╝  ╚═╝     ╚═╝  ",
+        "                                                      ",
+        "                        AlexFW                         ",
+        "                                                      ",
+      }
+      dashboard.section.buttons.val = {
         dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
         dashboard.button("f", "  Find file", ":Telescope find_files<CR>"),
         dashboard.button("r", "  Recent", ":Telescope oldfiles<CR>"),
@@ -61,18 +62,18 @@ return {
         dashboard.button("q", "  Quit NVIM", ":qa<CR>"),
       }
 
--- Completely customize the layout to ONLY show the header centered
-    dashboard.config.layout = {
-      { type = "padding", val = 26 }, -- Adds blank lines at the top to center it vertically
-      dashboard.section.header,
-    }
+      -- Completely customize the layout to ONLY show the header centered
+      dashboard.config.layout = {
+        { type = "padding", val = 26 }, -- Adds blank lines at the top to center it vertically
+        dashboard.section.header,
+      }
 
-    alpha.setup(dashboard.config)
-  end,
+      alpha.setup(dashboard.config)
+    end,
   },
 
--- (hopefully) overrides the default options of the included telescope plugin
-{
+  -- (hopefully) overrides the default options of the included telescope plugin
+  {
     "nvim-telescope/telescope.nvim",
     opts = function(_, opts)
       if not opts.defaults then opts.defaults = {} end
@@ -92,9 +93,7 @@ return {
             local buf = vim.api.nvim_win_get_buf(win)
             local bt = vim.api.nvim_get_option_value("buftype", { buf = buf })
             local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-            if bt ~= "terminal" and ft ~= "toggleterm" and ft ~= "qf" then
-              return win
-            end
+            if bt ~= "terminal" and ft ~= "toggleterm" and ft ~= "qf" then return win end
           end
         end
 
@@ -103,7 +102,7 @@ return {
 
       return opts -- Crucial fix for AstroNvim
     end,
-  },  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
+  }, -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
@@ -173,12 +172,12 @@ return {
   },
 
   { "catppuccin/nvim", name = "catppuccin", priority = 999 },
-{
-  "scottmckendry/cyberdream.nvim",
-  lazy = false,
-  priority = 1000,
---NOTE: config in ui.lua
-},
+  {
+    "scottmckendry/cyberdream.nvim",
+    lazy = false,
+    priority = 1000,
+    --NOTE: config in ui.lua
+  },
 
   {
     "github/copilot.vim",
@@ -253,6 +252,12 @@ return {
       require("neo-tree").setup {
         -- custom command to show all file infos
         filesystem = {
+          filtered_items = {
+            visible = true,
+            hide_dotfiles = false,
+            hide_gitignored = true,
+            never_show_by_name = require("constants").exclude_dirs,
+          },
           window = {
             mappings = {
               ["E"] = "expand_all_stats",
@@ -437,29 +442,27 @@ return {
     },
   },
   -- diagnostics for the whole workspace, not just current file
-{
-  "artemave/workspace-diagnostics.nvim",
-  event = "LspAttach",
-  config = function()
-    vim.api.nvim_create_autocmd("LspAttach", {
-      callback = function(args)
-        local client = vim.lsp.get_client_by_id(args.data.client_id)
-        if client then
-          require("workspace-diagnostics").populate_workspace_diagnostics(client, args.buf)
-        end
-      end,
-    })
-  end,
-},
+  {
+    "artemave/workspace-diagnostics.nvim",
+    event = "LspAttach",
+    config = function()
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client then require("workspace-diagnostics").populate_workspace_diagnostics(client, args.buf) end
+        end,
+      })
+    end,
+  },
   -- Nice scrolling animation
- {
+  {
     "karb94/neoscroll.nvim",
     opts = {
       duration_multiplier = 0.1,
     },
-},
+  },
 
-  -- NOTE: Not used atm, used to automatically adjust widht of 
+  -- NOTE: Not used atm, used to automatically adjust widht of
   -- current wndow
   -- {
   --   "anuvyklack/windows.nvim",
@@ -475,86 +478,84 @@ return {
   --   end,
   -- },
 
-  -- Opencode (AI code actions) 
+  -- Opencode (AI code actions)
   -- NOTE: implementation thats opencode focused, but trying out nvim ui focues alternative
--- {
---   "nickjvandyke/opencode.nvim",
---   version = "*", -- Latest stable release
---   dependencies = {
---     {
---       -- `snacks.nvim` integration is recommended, but optional
---       ---@module "snacks" <- Loads `snacks.nvim` types for configuration intellisense
---       "folke/snacks.nvim",
---       optional = true,
---       opts = {
---         input = {}, -- Enhances `ask()`
---         picker = { -- Enhances `select()`
---           actions = {
---             opencode_send = function(...) return require("opencode").snacks_picker_send(...) end,
---           },
---           win = {
---             input = {
---               keys = {
---                 ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
---               },
---             },
---           },
---         },
---       },
---     },
---   },
---   config = function()
---     ---@type opencode.Opts
---     vim.g.opencode_opts = {
---       server = {
---         start = function()
---           local cwd = vim.fn.getcwd()
---           local name = vim.fs.basename(cwd)
---           require("opencode.terminal").open(
---             ("docker run --rm -it -v %s:/repo -w /repo %s opencode --port"):format(cwd, name), {
---               split = "right",
---               width = math.floor(vim.o.columns * 0.35),
---             })
---         end,
---         toggle = function()
---           local cwd = vim.fn.getcwd()
---           local name = vim.fs.basename(cwd)
---           require("opencode.terminal").toggle(
---             ("docker run --rm -it -v %s:/repo -w /repo %s opencode --port"):format(cwd, name), {
---               split = "right",
---               width = math.floor(vim.o.columns * 0.35),
---             })
---         end,
---       },
---     }
---
---     vim.o.autoread = true -- Required for `opts.events.reload`
---
---     -- Recommended/example keymaps
---     vim.keymap.set({ "n", "x" }, "<C-a>", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask opencode…" })
---     vim.keymap.set({ "n", "x" }, "<C-x>", function() require("opencode").select() end,                          { desc = "Execute opencode action…" })
---     vim.keymap.set({ "n", "t" }, "<C-.>", function() require("opencode").toggle() end,                          { desc = "Toggle opencode" })
---
---     vim.keymap.set({ "n", "x" }, "go",  function() return require("opencode").operator("@this ") end,        { desc = "Add range to opencode", expr = true })
---     vim.keymap.set("n",          "goo", function() return require("opencode").operator("@this ") .. "_" end, { desc = "Add line to opencode", expr = true })
---
---     vim.keymap.set("n", "<S-C-u>", function() require("opencode").command("session.half.page.up") end,   { desc = "Scroll opencode up" })
---     vim.keymap.set("n", "<S-C-d>", function() require("opencode").command("session.half.page.down") end, { desc = "Scroll opencode down" })
---
---     -- You may want these if you use the opinionated `<C-a>` and `<C-x>` keymaps above — otherwise consider `<leader>o…` (and remove terminal mode from the `toggle` keymap)
---     vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
---     vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
---   end,
---   },
-
+  -- {
+  --   "nickjvandyke/opencode.nvim",
+  --   version = "*", -- Latest stable release
+  --   dependencies = {
+  --     {
+  --       -- `snacks.nvim` integration is recommended, but optional
+  --       ---@module "snacks" <- Loads `snacks.nvim` types for configuration intellisense
+  --       "folke/snacks.nvim",
+  --       optional = true,
+  --       opts = {
+  --         input = {}, -- Enhances `ask()`
+  --         picker = { -- Enhances `select()`
+  --           actions = {
+  --             opencode_send = function(...) return require("opencode").snacks_picker_send(...) end,
+  --           },
+  --           win = {
+  --             input = {
+  --               keys = {
+  --                 ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
+  --               },
+  --             },
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  --   config = function()
+  --     ---@type opencode.Opts
+  --     vim.g.opencode_opts = {
+  --       server = {
+  --         start = function()
+  --           local cwd = vim.fn.getcwd()
+  --           local name = vim.fs.basename(cwd)
+  --           require("opencode.terminal").open(
+  --             ("docker run --rm -it -v %s:/repo -w /repo %s opencode --port"):format(cwd, name), {
+  --               split = "right",
+  --               width = math.floor(vim.o.columns * 0.35),
+  --             })
+  --         end,
+  --         toggle = function()
+  --           local cwd = vim.fn.getcwd()
+  --           local name = vim.fs.basename(cwd)
+  --           require("opencode.terminal").toggle(
+  --             ("docker run --rm -it -v %s:/repo -w /repo %s opencode --port"):format(cwd, name), {
+  --               split = "right",
+  --               width = math.floor(vim.o.columns * 0.35),
+  --             })
+  --         end,
+  --       },
+  --     }
+  --
+  --     vim.o.autoread = true -- Required for `opts.events.reload`
+  --
+  --     -- Recommended/example keymaps
+  --     vim.keymap.set({ "n", "x" }, "<C-a>", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask opencode…" })
+  --     vim.keymap.set({ "n", "x" }, "<C-x>", function() require("opencode").select() end,                          { desc = "Execute opencode action…" })
+  --     vim.keymap.set({ "n", "t" }, "<C-.>", function() require("opencode").toggle() end,                          { desc = "Toggle opencode" })
+  --
+  --     vim.keymap.set({ "n", "x" }, "go",  function() return require("opencode").operator("@this ") end,        { desc = "Add range to opencode", expr = true })
+  --     vim.keymap.set("n",          "goo", function() return require("opencode").operator("@this ") .. "_" end, { desc = "Add line to opencode", expr = true })
+  --
+  --     vim.keymap.set("n", "<S-C-u>", function() require("opencode").command("session.half.page.up") end,   { desc = "Scroll opencode up" })
+  --     vim.keymap.set("n", "<S-C-d>", function() require("opencode").command("session.half.page.down") end, { desc = "Scroll opencode down" })
+  --
+  --     -- You may want these if you use the opinionated `<C-a>` and `<C-x>` keymaps above — otherwise consider `<leader>o…` (and remove terminal mode from the `toggle` keymap)
+  --     vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
+  --     vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
+  --   end,
+  --   },
 
   -- TODO: move to mappings?
   vim.keymap.set("n", "<leader>gD", function()
     -- Ensure fugitive is loaded
     require("telescope.builtin").git_branches {
       only_local = true, -- avoid duplicates
-      attach_mapping
-        = function(_, map)
+      attach_mapping = function(_, map)
         map("i", "<CR>", function(prompt_bufnr)
           ---@diagnostic disable-next-line: redundant-parameter
           local selection = require("telescope.actions.state").get_selected_entry(prompt_bufnr)
@@ -575,5 +576,4 @@ return {
       end,
     }
   end, { desc = "Git diff against selected branch" }),
-
 }

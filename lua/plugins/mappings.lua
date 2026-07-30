@@ -68,13 +68,11 @@ return {
           ["<Leader>ro"] = {
             function()
               local file = vim.fn.expand "%:t:r"
-              local compile_cmd = { "ocamlfind", "ocamlopt", "-o", file, vim.fn.expand("%") }
+              local compile_cmd = { "ocamlfind", "ocamlopt", "-o", file, vim.fn.expand "%" }
               vim.fn.jobstart(compile_cmd, {
                 onExit = function(_, code)
-                  if code == 0 then
-                    vim.fn.jobstart({ "./" .. file }, { detach = true })
-                  end
-                end
+                  if code == 0 then vim.fn.jobstart({ "./" .. file }, { detach = true }) end
+                end,
               })
             end,
             desc = "Compile and run current file with OCaml",
@@ -128,11 +126,13 @@ return {
               local term_buf = vim.api.nvim_create_buf(false, true)
               vim.api.nvim_win_set_buf(0, term_buf)
 
-              vim.api.nvim_buf_call(term_buf, function()
-                vim.fn.jobstart({
-                  "zsh",
-                  "-ic",
-                  [[
+              vim.api.nvim_buf_call(
+                term_buf,
+                function()
+                  vim.fn.jobstart({
+                    "zsh",
+                    "-ic",
+                    [[
                     if [ -f venv/bin/activate ]; then
                       echo "Activating venv..."
                       source venv/bin/activate
@@ -141,12 +141,13 @@ return {
                     fi
                     exec zsh -i
                   ]],
-                }, {
-                  term = true,
-                })
-              end)
+                  }, {
+                    term = true,
+                  })
+                end
+              )
 
-              vim.cmd("startinsert")
+              vim.cmd "startinsert"
             end,
             desc = "COMPAC workspace setup",
           },
