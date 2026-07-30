@@ -113,16 +113,16 @@ return {
             end,
             desc = "Renders and exports markdown with latex",
           },
-          -- NOTE: moved to telescope.lua because require telescope.builtin might give issues
-          -- ["<Leader>fd"] = {
-          --   function() require("telescope.builtin").diagnostics() end,
-          --   desc = "Find diagnostics (buffer)",
-          -- },
-          -- ["<Leader>fD"] = {
-          --   function() vim.cmd "Telescope lsp_workspace_diagnostics" end,
-          --   desc = "Find diagnostics (all files)",
-          -- },
-          --
+          ["<Leader>ff"] = {
+            function()
+              require("snacks").picker.files {
+                hidden = true,
+                ignored = true,
+                exclude = require("constants").exclude_dirs,
+              }
+            end,
+            desc = "Find files",
+          },
           ["<Leader>zs"] = {
             function()
               local term_buf = vim.api.nvim_create_buf(false, true)
