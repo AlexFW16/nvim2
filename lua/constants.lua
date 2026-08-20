@@ -9,5 +9,7 @@ return {
     "dist",
     ".mypy_cache",
     ".pytest_cache",
+    ".gitignore",
+    "deprecated",
   },
 }
