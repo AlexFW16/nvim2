@@ -152,6 +152,25 @@ return {
             desc = "COMPAC workspace setup",
           },
           ["<Leader>zf"] = { function() vim.lsp.buf.format { async = true } end, desc = "LSP: Format file" }, -- Auto formats the file
+          -- Terminal in a local split of the current window (not full-width/height)
+          ["<Leader>th"] = {
+            function()
+              local total = vim.api.nvim_win_get_height(0)
+              vim.cmd "split"
+              vim.api.nvim_win_set_height(0, math.floor(total * 0.25))
+              vim.cmd "terminal"
+            end,
+            desc = "Terminal: horizontal split (25%)",
+          },
+          ["<Leader>tv"] = {
+            function()
+              local total = vim.api.nvim_win_get_width(0)
+              vim.cmd "vsplit"
+              vim.api.nvim_win_set_width(0, math.floor(total * 0.25))
+              vim.cmd "terminal"
+            end,
+            desc = "Terminal: vertical split (25%)",
+          },
         },
 
         t = {
