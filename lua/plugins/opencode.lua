@@ -31,6 +31,7 @@ return {
           -- Main controls
           ["<C-p>"] = {
             "toggle",
+            mode = { "n", "i" },
             desc = "Toggle OpenCode window",
           },
           ["<leader>oi"] = false,
@@ -64,15 +65,9 @@ return {
             desc = "Rename session",
           },
 
-          -- Session tabs: navigate like Neovim buffers
-          ["[b"] = {
-            "prev_session_tab",
-            desc = "Previous OpenCode session tab",
-          },
-          ["]b"] = {
-            "next_session_tab",
-            desc = "Next OpenCode session tab",
-          },
+          -- Session tabs: navigate like Neovim buffers (but not outside of opencode)
+          ["[b"] = false,
+          ["]b"] = false,
 
           -- Model settings
           ["<leader>op"] = {
@@ -172,9 +167,11 @@ return {
 
         input_window = {
           -- Keep Enter available for normal input/submission behavior
-          ["<C-cr>"] = false,
-          ["<S-cr>"] = false,
-
+          ["<cr>"] = {
+            "submit_input_prompt",
+            mode = { "i", "n" },
+            desc = "Submit prompt",
+          },
           ["~"] = {
             "mention_file",
             mode = { "i" },

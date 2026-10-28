@@ -23,9 +23,8 @@ if not pcall(require, "lazy") then
   vim.cmd.quit()
 end
 
--- my stuff
--- TODO: implement
---require "lsp"
+-- my stuff: configurations
+require "plugins/blink-cmp"
 require "node_version"
 
 -- Delete full word with Ctrl + Backspace in Insert Mode

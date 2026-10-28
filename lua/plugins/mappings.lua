@@ -152,22 +152,25 @@ return {
             desc = "COMPAC workspace setup",
           },
           ["<Leader>zf"] = { function() vim.lsp.buf.format { async = true } end, desc = "LSP: Format file" }, -- Auto formats the file
-          -- Terminal in a local split of the current window (not full-width/height)
+          -- Terminal in a local split of the current window (not full-width/height).
+          -- When venv auto-activate is ON (<Leader>tx), a single detected venv is activated automatically.
+          -- Terminal in a local split, activating the detected venv if available.
           ["<Leader>th"] = {
             function()
               local total = vim.api.nvim_win_get_height(0)
               vim.cmd "split"
-              vim.api.nvim_win_set_height(0, math.floor(total * 0.25))
-              vim.cmd "terminal"
+              vim.api.nvim_win_set_height(0, math.floor(total * 0.10))
+              require("venv").start_terminal()
             end,
-            desc = "Terminal: horizontal split (25%)",
+            desc = "Terminal: horizontal split (10%)",
           },
+
           ["<Leader>tv"] = {
             function()
               local total = vim.api.nvim_win_get_width(0)
               vim.cmd "vsplit"
               vim.api.nvim_win_set_width(0, math.floor(total * 0.25))
-              vim.cmd "terminal"
+              require("venv").start_terminal()
             end,
             desc = "Terminal: vertical split (25%)",
           },
