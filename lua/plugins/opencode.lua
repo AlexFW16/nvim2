@@ -7,118 +7,313 @@ return {
         anti_conceal = { enabled = false },
         file_types = { "markdown", "opencode_output" },
       },
-      ft = { "markdown", "Avante", "copilot-chat", "opencode_output" },
+      ft = {
+        "markdown",
+        "Avante",
+        "copilot-chat",
+        "opencode_output",
+      },
     },
     "saghen/blink.cmp",
     "folke/snacks.nvim",
   },
+
   config = function()
     require("opencode").setup {
       preferred_picker = "snacks",
-      preferred_completion = nil,
       default_global_keymaps = true,
       default_mode = "plan",
-      default_system_prompt = nil,
       keymap_prefix = "<C-x>",
       opencode_executable = "opencode",
-      snapshot_path = nil,
-
-      server = {
-        url = nil,
-        port = nil,
-        timeout = 5,
-        spawn_command = nil,
-        auto_kill = true,
-        path_map = nil,
-        username = nil,
-        password = nil,
-      },
 
       keymap = {
         editor = {
-          ["<leader>og"] = { "toggle" },
-          -- ["<leader>oi"] = { "open_input" },
-          ["<C-p>"] = { "open_input" },
-          ["<C-P>"] = { "open_input_new_session" },
-          ["<leader>oo"] = { "open_output" },
-          ["<leader>ot"] = { "toggle_focus" },
-          ["<leader>oT"] = { "timeline" },
-          ["<leader>oq"] = { "close" },
-          ["<leader>os"] = { "select_session" },
-          ["<leader>oR"] = { "rename_session" },
-          ["<leader>op"] = { "configure_provider" },
-          ["<leader>oV"] = { "configure_variant" },
-          ["<leader>oy"] = { "add_visual_selection", mode = { "v" } },
-          ["<leader>oY"] = { "add_visual_selection_inline", mode = { "v" } },
-          ["<leader>oz"] = { "toggle_zoom" },
-          ["<leader>ov"] = { "paste_image" },
-          ["<leader>od"] = { "diff_open" },
-          ["<leader>o]"] = { "diff_next" },
-          ["<leader>o["] = { "diff_prev" },
-          ["<leader>oc"] = { "diff_close" },
-          ["<leader>ora"] = { "diff_revert_all_last_prompt" },
-          ["<leader>ort"] = { "diff_revert_this_last_prompt" },
-          ["<leader>orA"] = { "diff_revert_all" },
-          ["<leader>orT"] = { "diff_revert_this" },
-          ["<leader>orr"] = { "diff_restore_snapshot_file" },
-          ["<leader>orR"] = { "diff_restore_snapshot_all" },
-          ["<leader>ox"] = { "swap_position" },
-          ["<leader>ott"] = { "toggle_tool_output" },
-          ["<leader>otr"] = { "toggle_reasoning_output" },
-          -- ["<leader>o/"] = { "quick_chat", mode = { "n", "x" } },
-          ["<C-a>"] = { "quick_chat", mode = { "n", "x" } },
+          -- Main controls
+          ["<C-p>"] = {
+            "toggle",
+            desc = "Toggle OpenCode window",
+          },
+          ["<leader>oi"] = false,
+          ["<leader>oI"] = false,
+          ["<C-S-p>"] = {
+            "open_input_new_session",
+            desc = "Open input in a new session",
+          },
+          ["<leader>oo"] = {
+            "open_output",
+            desc = "Open output window",
+          },
+          ["<leader>ot"] = {
+            "toggle_focus",
+            desc = "Toggle focus",
+          },
+          ["<leader>oT"] = {
+            "timeline",
+            desc = "Open session timeline",
+          },
+          ["<leader>oq"] = {
+            "close",
+            desc = "Close OpenCode window",
+          },
+          ["<leader>os"] = {
+            "select_session",
+            desc = "Select session",
+          },
+          ["<leader>oR"] = {
+            "rename_session",
+            desc = "Rename session",
+          },
+
+          -- Session tabs: navigate like Neovim buffers
+          ["[b"] = {
+            "prev_session_tab",
+            desc = "Previous OpenCode session tab",
+          },
+          ["]b"] = {
+            "next_session_tab",
+            desc = "Next OpenCode session tab",
+          },
+
+          -- Model settings
+          ["<leader>op"] = {
+            "configure_provider",
+            desc = "Configure provider",
+          },
+          ["<leader>oV"] = {
+            "configure_variant",
+            desc = "Configure model variant",
+          },
+
+          -- Context
+          ["<leader>oy"] = {
+            "add_visual_selection",
+            mode = { "v" },
+            desc = "Add visual selection to context",
+          },
+          ["<leader>oY"] = {
+            "add_visual_selection_inline",
+            mode = { "v" },
+            desc = "Insert selection into input",
+          },
+
+          -- Layout and diffs
+          ["<leader>oz"] = {
+            "toggle_zoom",
+            desc = "Toggle zoom",
+          },
+          ["<leader>ov"] = {
+            "paste_image",
+            desc = "Paste image from clipboard",
+          },
+          ["<leader>od"] = {
+            "diff_open",
+            desc = "Open diff view",
+          },
+          ["<leader>o]"] = {
+            "diff_next",
+            desc = "Next diff",
+          },
+          ["<leader>o["] = {
+            "diff_prev",
+            desc = "Previous diff",
+          },
+          ["<leader>oc"] = {
+            "diff_close",
+            desc = "Close diff view",
+          },
+
+          -- Revert changes
+          ["<leader>ora"] = {
+            "diff_revert_all_last_prompt",
+            desc = "Revert all changes from last prompt",
+          },
+          ["<leader>ort"] = {
+            "diff_revert_this_last_prompt",
+            desc = "Revert last prompt change",
+          },
+          ["<leader>orA"] = {
+            "diff_revert_all",
+            desc = "Revert all changes",
+          },
+          ["<leader>orT"] = {
+            "diff_revert_this",
+            desc = "Revert this change",
+          },
+          ["<leader>orr"] = {
+            "diff_restore_snapshot_file",
+            desc = "Restore file snapshot",
+          },
+          ["<leader>orR"] = {
+            "diff_restore_snapshot_all",
+            desc = "Restore all snapshots",
+          },
+
+          ["<leader>ox"] = {
+            "swap_position",
+            desc = "Swap window position",
+          },
+          ["<leader>ott"] = {
+            "toggle_tool_output",
+            desc = "Toggle tool output",
+          },
+          ["<leader>otr"] = {
+            "toggle_reasoning_output",
+            desc = "Toggle reasoning output",
+          },
+
+          -- Use Ctrl+A instead of the default leader mapping
+          ["<leader>o/"] = false,
+          ["<C-a>"] = {
+            "quick_chat",
+            mode = { "n", "x" },
+            desc = "Quick chat with current context",
+          },
         },
+
         input_window = {
-          -- ["<C-cr>"] = { "submit_input_prompt", mode = { "n", "i" } },
-          -- ["<S-cr>"] = { "submit_input_prompt", mode = { "n", "i" } },WARN: was interfering with submit!
-          ["<esc>"] = { "close", defer_to_completion = false }, --WARN:
-          ["<C-m>"] = { "cancel", defer_to_completion = true },
-          ["~"] = { "mention_file", mode = "i" },
-          ["@"] = { "mention", mode = "i" },
-          ["/"] = { "slash_commands", mode = "i" },
-          ["#"] = { "context_items", mode = "i" },
-          ["<M-v>"] = { "paste_image", mode = "i" },
-          ["<tab>"] = { "toggle_pane", mode = { "n", "i" }, defer_to_completion = true },
-          ["<up>"] = { "prev_prompt_history", mode = { "n", "i" }, defer_to_completion = true },
-          ["<down>"] = { "next_prompt_history", mode = { "n", "i" }, defer_to_completion = true },
-          ["<M-m>"] = { "switch_mode" },
-          ["<M-r>"] = { "cycle_variant", mode = { "n", "i" } },
+          -- Keep Enter available for normal input/submission behavior
+          ["<C-cr>"] = false,
+          ["<S-cr>"] = false,
+
+          ["~"] = {
+            "mention_file",
+            mode = { "i" },
+            desc = "Mention file in context",
+          },
+          ["@"] = {
+            "mention",
+            mode = { "i" },
+            desc = "Open mention picker",
+          },
+          ["/"] = {
+            "slash_commands",
+            mode = { "i" },
+            desc = "Open slash commands",
+          },
+          ["#"] = {
+            "context_items",
+            mode = { "i" },
+            desc = "Open context items",
+          },
+          ["<M-v>"] = {
+            "paste_image",
+            mode = { "i" },
+            desc = "Paste image",
+          },
+          ["<tab>"] = {
+            "toggle_pane",
+            mode = { "n", "i" },
+            defer_to_completion = true,
+            desc = "Toggle input/output panes",
+          },
+          ["<up>"] = {
+            "prev_prompt_history",
+            mode = { "n", "i" },
+            defer_to_completion = true,
+            desc = "Previous prompt history item",
+          },
+          ["<down>"] = {
+            "next_prompt_history",
+            mode = { "n", "i" },
+            defer_to_completion = true,
+            desc = "Next prompt history item",
+          },
+          ["<M-m>"] = {
+            "switch_mode",
+            mode = { "n", "i" },
+            desc = "Switch agent mode",
+          },
+          ["<M-r>"] = {
+            "cycle_variant",
+            mode = { "n", "i" },
+            desc = "Cycle model variants",
+          },
+          ["<esc>"] = false,
+
+          ["<C-p>"] = {
+            "toggle",
+            mode = { "n", "i" },
+            defer_to_completion = false,
+            desc = "Toggle OpenCode window",
+          },
+
+          ["[b"] = {
+            "prev_session_tab",
+            mode = { "n" },
+            desc = "Previous OpenCode tab",
+          },
+          ["]b"] = {
+            "next_session_tab",
+            mode = { "n" },
+            desc = "Next OpenCode tab",
+          },
+
+          ["<leader>n"] = {
+            "open_session_tab",
+            mode = { "n" },
+            desc = "New OpenCode tab",
+          },
+          ["<leader>c"] = {
+            "close_session_tab",
+            mode = { "n" },
+            desc = "Close OpenCode tab",
+          },
         },
+
         output_window = {
-          -- ["<esc>"] = { "close" }, --WARN:, removed for tests
-          ["<C-c>"] = { "cancel" },
-          ["]]"] = { "next_message" },
-          ["[["] = { "prev_message" },
-          ["<tab>"] = { "toggle_pane", mode = { "n", "i" } },
-          ["i"] = { "focus_input", "n" },
-          ["gf"] = { "jump_to_file", mode = { "n" } },
-          ["<M-r>"] = { "cycle_variant", mode = { "n" } },
-          -- DEPRECATED: these actions were removed in favor of navigate_session_tree (now built-in defaults)
-          -- ["<leader>oS"] = { "navigate_session_tree", { "child", "picker" } },
-          -- ["<leader>oP"] = { "navigate_session_tree", { "parent" } },
-          -- ["<leader>oB"] = { "navigate_session_tree", { "sibling", "picker" } },
-          ["<leader>oD"] = { "debug_message" },
-          ["<leader>oO"] = { "debug_output" },
-          ["<leader>ods"] = { "debug_session" },
-        },
-        session_picker = {
-          rename_session = { "<C-r>" },
-          delete_session = { "<C-d>" },
-          new_session = { "<C-s>" },
-        },
-        timeline_picker = {
-          undo = { "<C-u>", mode = { "i", "n" } },
-          fork = { "<C-f>", mode = { "i", "n" } },
-        },
-        history_picker = {
-          delete_entry = { "<C-d>", mode = { "i", "n" } },
-          clear_all = { "<C-X>", mode = { "i", "n" } },
-        },
-        model_picker = {
-          toggle_favorite = { "<C-f>", mode = { "i", "n" } },
-        },
-        mcp_picker = {
-          toggle_connection = { "<C-t>", mode = { "i", "n" } },
+          -- Explicitly disable the default Escape-to-close behavior
+          ["<esc>"] = false,
+
+          ["<C-p>"] = {
+            "toggle",
+            mode = { "n" },
+            desc = "Toggle OpenCode window",
+          },
+          ["<C-c>"] = {
+            "cancel",
+            desc = "Cancel running request",
+          },
+          ["]]"] = {
+            "next_message",
+            desc = "Next message",
+          },
+          ["[["] = {
+            "prev_message",
+            desc = "Previous message",
+          },
+          ["<tab>"] = {
+            "toggle_pane",
+            mode = { "n", "i" },
+            desc = "Toggle input/output panes",
+          },
+          ["i"] = {
+            "focus_input",
+            mode = { "n" },
+            desc = "Focus input window",
+          },
+          ["gf"] = {
+            "jump_to_file",
+            mode = { "n" },
+            desc = "Jump to file",
+          },
+          ["<M-r>"] = {
+            "cycle_variant",
+            mode = { "n" },
+            desc = "Cycle model variants",
+          },
+
+          ["<leader>oD"] = {
+            "debug_message",
+            desc = "Open raw message debug view",
+          },
+          ["<leader>oO"] = {
+            "debug_output",
+            desc = "Open raw output debug view",
+          },
+          ["<leader>ods"] = {
+            "debug_session",
+            desc = "Open raw session debug view",
+          },
         },
       },
 
@@ -128,22 +323,28 @@ return {
         input_position = "bottom",
         window_width = 0.40,
         zoom_width = 0.8,
+
         display_model = true,
         display_context_size = true,
         display_cost = true,
+
         window_highlight = "Normal:OpencodeBackground,FloatBorder:OpencodeBorder",
         persist_state = true,
+
         icons = {
           preset = "nerdfonts",
           overrides = {},
         },
+
         questions = {
           use_vim_ui_select = false,
           inline_other_input = true,
         },
+
         output = {
           filetype = "opencode_output",
           compact_assistant_headers = false,
+
           tools = {
             show_output = true,
             show_reasoning_output = true,
@@ -151,15 +352,18 @@ return {
             folding_threshold = 25,
             fold_exclude = {
               "bash",
-              { server = "sequential-thinking", tool = "sequentialthinking" },
+              {
+                server = "sequential-thinking",
+                tool = "sequentialthinking",
+              },
             },
           },
+
           rendering = {
             markdown_debounce_ms = 250,
-            on_data_rendered = nil,
           },
-          max_messages = nil,
         },
+
         input = {
           min_height = 0.10,
           max_height = 0.25,
@@ -168,107 +372,59 @@ return {
           },
           auto_hide = false,
         },
+
         picker = {
           snacks_layout = nil,
-        },
-        completion = {
-          file_sources = {
-            enabled = true,
-            preferred_cli_tool = "server",
-            ignore_patterns = {
-              "^%.git/",
-              "^%.svn/",
-              "^%.hg/",
-              "node_modules/",
-              "%.pyc$",
-              "%.o$",
-              "%.obj$",
-              "%.exe$",
-              "%.dll$",
-              "%.so$",
-              "%.dylib$",
-              "%.class$",
-              "%.jar$",
-              "%.war$",
-              "%.ear$",
-              "target/",
-              "build/",
-              "dist/",
-              "out/",
-              "deps/",
-              "%.tmp$",
-              "%.temp$",
-              "%.log$",
-              "%.cache$",
-            },
-            max_files = 10,
-            max_display_length = 50,
-          },
         },
       },
 
       context = {
         enabled = true,
+
         cursor_data = {
           enabled = false,
           context_lines = 5,
         },
+
         diagnostics = {
+          enabled = true,
           info = true,
           warning = true,
           error = true,
           only_closest = false,
         },
+
         current_file = {
           enabled = true,
           show_full_path = true,
         },
+
         files = {
           enabled = true,
           show_full_path = true,
         },
+
         selection = {
           enabled = true,
         },
+
         buffer = {
           enabled = false,
         },
+
         git_diff = {
           enabled = false,
         },
+
+        -- review_comments and agents retain the new defaults
       },
 
       logging = {
         enabled = false,
         level = "warn",
-        outfile = nil,
       },
 
-      debug = {
-        enabled = false,
-        capture_streamed_events = false,
-        show_ids = true,
-        quick_chat = {
-          keep_session = false,
-          set_active_session = false,
-        },
-      },
-
-      prompt_guard = nil,
       child_readonly = true,
-
-      hooks = {
-        on_file_edited = nil,
-        on_session_loaded = nil,
-        on_done_thinking = nil,
-        on_permission_requested = nil,
-      },
-
-      quick_chat = {
-        default_model = nil,
-        default_agent = nil,
-        instructions = nil,
-      },
     }
   end,
 }
