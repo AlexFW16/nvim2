@@ -6,15 +6,15 @@ AstroNvim v6 user configuration (not a plugin). Neovim config lives at `~/.confi
 
 ## Boot sequence
 
-`init.lua` -> `lua/node_version.lua` -> `lua/lazy_setup.lua` -> `lua/polish.lua`
+`init.lua` -> `lua/plugins/blink-cmp` (required directly), `lua/node_version.lua` (prepends nvm Node to PATH), `lua/lazy_setup.lua`, `lua/polish.lua`
 
-lazy.nvim loads AstroNvim core, then `lua/community.lua` (currently disabled), then `lua/plugins/*.lua`.
+lazy.nvim loads AstroNvim core, then `lua/community.lua` (currently disabled), then `lua/plugins/*.lua`. Leader (`Space`) and LocalLeader (`,`) are set in `lua/lazy_setup.lua` via AstroNvim opts.
 
 ## Linting & formatting
 
-- **Formatter**: stylua (`.stylua.toml`): 2-space indent, no call parentheses, Unix line endings.
+- **Formatter**: stylua (`.stylua.toml`): 2-space indent, no call parentheses, Unix line endings, column width 120.
 - **Linter**: selene (`selene.toml`, `neovim.yml` for globals).
-- LSP formatting is explicitly disabled (`.luarc.json`, `.neoconf.json`). Always use `stylua` directly.
+- LSP formatting is explicitly disabled (`.luarc.json` has `"format.enable": false`, `.neoconf.json` disables lua_ls formatting). Always use `stylua` directly.
 
 ## Key conventions
 
@@ -22,11 +22,12 @@ lazy.nvim loads AstroNvim core, then `lua/community.lua` (currently disabled), t
 - `lua/community.lua` is intentionally disabled (early `return {}` guard). Do not remove the guard unless activating community packs.
 - `lazy-lock.json` is gitignored. Never commit it.
 - `lua/node_version.lua` hardcodes nvm Node v22.21.1 into PATH. Adjust there if node version changes.
-- `lua/lsp.lua` has a manual SWI-Prolog LSP config but is currently not required from `init.lua` (commented out with a TODO).
+- Plugins live in `lua/plugins/*.lua` - each file returns a lazy.nvim spec table. Some plugins are configured in `lua/plugins/user.lua` (which contains many personal customizations).
 
 ## Shared constants
 
 - `lua/constants.lua` exports a single `exclude_dirs` list used by snacks picker, grep, and neo-tree. Add new noisy directories there.
+- `lua/venv.lua` provides `M.start_terminal()` which opens a terminal and auto-sources the venv detected by `tnfru/nvim-venv-detector` (via `vim.g.venv_detector_python_path`). Virtual environment detection/activation is handled globally by the `nvim-venv-detector` plugin.
 
 ## Scratch folder
 
