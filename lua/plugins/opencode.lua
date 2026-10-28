@@ -13,11 +13,11 @@ return {
     "folke/snacks.nvim",
   },
   config = function()
-    require("opencode").setup({
-      preferred_picker = 'snacks',
+    require("opencode").setup {
+      preferred_picker = "snacks",
       preferred_completion = nil,
       default_global_keymaps = true,
-      default_mode = "build",
+      default_mode = "plan",
       default_system_prompt = nil,
       keymap_prefix = "<C-x>",
       opencode_executable = "opencode",
@@ -69,8 +69,8 @@ return {
           ["<C-a>"] = { "quick_chat", mode = { "n", "x" } },
         },
         input_window = {
-          ["<C-cr>"] = { "submit_input_prompt", mode = { "n", "i" } },
-          ["<S-cr>"] = { "submit_input_prompt", mode = { "n", "i" } },
+          -- ["<C-cr>"] = { "submit_input_prompt", mode = { "n", "i" } },
+          -- ["<S-cr>"] = { "submit_input_prompt", mode = { "n", "i" } },WARN: was interfering with submit!
           ["<esc>"] = { "close", defer_to_completion = false }, --WARN:
           ["<C-m>"] = { "cancel", defer_to_completion = true },
           ["~"] = { "mention_file", mode = "i" },
@@ -85,7 +85,7 @@ return {
           ["<M-r>"] = { "cycle_variant", mode = { "n", "i" } },
         },
         output_window = {
-          ["<esc>"] = { "close" }, --WARN:
+          -- ["<esc>"] = { "close" }, --WARN:, removed for tests
           ["<C-c>"] = { "cancel" },
           ["]]"] = { "next_message" },
           ["[["] = { "prev_message" },
@@ -269,6 +269,6 @@ return {
         default_agent = nil,
         instructions = nil,
       },
-    })
+    }
   end,
 }
